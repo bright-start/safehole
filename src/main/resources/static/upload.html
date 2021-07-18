@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>文件上传</title>
+</head>
+<body>
+<!--<form action="http://localhost:8081/upload" enctype="multipart/form-data" method="post">-->
+<form onsubmit="return false">
+    <input type="file" name="file" id="file">
+    <input type="submit" value="submit" id="add">
+</form>
+<img src="#" height="200" width="200" class="pho"/>
+<button class="dd"></button>
+</body>
+<script src="js/jquery-3.5.1.min.js"></script>
+<script>
+    $("#add").click(function(){
+        console.log("1");
+        var formData = new FormData();//这里需要实例化一个FormData来进行文件上传
+		formData.append("file",$("#file")[0].files[0]);
+		$.ajax({
+           url : "http://localhost:8081/upload",
+           data: formData,
+           type : "POST",
+           // 告诉jQuery不要去处理发送的数据，用于对data参数进行序列化处理 这里必须false
+           processData : false,
+           // 告诉jQuery不要去设置Content-Type请求头
+           contentType : false,
+           success : function(data) {
+                 $(".pho").attr("src", 'data:image/png;base64,' + data.data);
+                 console.log(data.name);
+                 $(".dd").text(data.name);
+           }
+        });
+    });
+    $(".dd").click(function(){
+
+        var url = "http://localhost:8081/down?name="+$(".dd").text();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);    // 也可以使用POST方式，根据接口
+        xhr.responseType = "blob";
+<!--        websocket推送实现进度-->
+        xhr.onreadystatechange = function() {
+            if(xhr.readyState === 3){
+                getProcess($(".dd").text());
+            }
+        };
+<!--        xmlhttprequest实现进度监控-->
+<!--        xhr.addEventListener("progress", function (evt) {-->
+<!--            if (evt.lengthComputable) {-->
+<!--                var percentComplete = evt.loaded * 100 / evt.total;-->
+<!--                console.log(percentComplete);-->
+<!--            }-->
+<!--        }, false);-->
+        xhr.onload = function () {
+            if (this.status === 200) {
+                var aTag = document.createElement('a');
+                var blob = new Blob([xhr.response]);
+                aTag.download = $(".dd").text();
+                aTag.href = URL.createObjectURL(blob);
+                aTag.click();
+                URL.revokeObjectURL(blob);
+            }
+        };
+        xhr.send();
+
+        function getProcess(id){
+            var socketUrl="http://localhost:8081/server";
+            socketUrl=socketUrl.replace("https","ws").replace("http","ws");
+
+            socket = new WebSocket(socketUrl);
+            //打开事件
+            socket.onopen = function() {
+                console.log("websocket已打开");
+                socket.send(id);
+            };
+            //获得消息事件
+            socket.onmessage = function(msg) {
+                console.log(msg.data);
+                if(msg.data == "100%"){
+                    $(".dd").text(id);
+                }else{
+                    $(".dd").text(msg.data);
+                }
+
+            };
+            //关闭事件
+            socket.onclose = function() {
+                console.log("websocket已关闭");
+            };
+            //发生了错误事件
+            socket.onerror = function() {
+                console.log("websocket发生了错误");
+            }
+        }
+    });
+
+
+</script>
+
+
+</html>

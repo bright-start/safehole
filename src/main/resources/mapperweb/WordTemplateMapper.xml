@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.safe.demo.web.mapper.WordTemplateMapper" >
+  <resultMap id="BaseResultMap" type="com.safe.demo.web.pojo.WordTemplate" >
+    <id column="word_template_id" property="wordTemplateId" jdbcType="INTEGER" />
+    <result column="word_name" property="wordName" jdbcType="VARCHAR" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.safe.demo.web.pojo.WordTemplate" extends="BaseResultMap" >
+    <result column="template_date" property="templateDate" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    word_template_id, word_name
+  </sql>
+  <sql id="Blob_Column_List" >
+    template_date
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.safe.demo.web.pojo.WordTemplateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from word_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.safe.demo.web.pojo.WordTemplateExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from word_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from word_template
+    where word_template_id = #{wordTemplateId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from word_template
+    where word_template_id = #{wordTemplateId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.safe.demo.web.pojo.WordTemplateExample" >
+    delete from word_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.safe.demo.web.pojo.WordTemplate" >
+    insert into word_template (word_template_id, word_name, template_date
+      )
+    values (#{wordTemplateId,jdbcType=INTEGER}, #{wordName,jdbcType=VARCHAR}, #{templateDate,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.safe.demo.web.pojo.WordTemplate" >
+    insert into word_template
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="wordTemplateId != null" >
+        word_template_id,
+      </if>
+      <if test="wordName != null" >
+        word_name,
+      </if>
+      <if test="templateDate != null" >
+        template_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="wordTemplateId != null" >
+        #{wordTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="wordName != null" >
+        #{wordName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateDate != null" >
+        #{templateDate,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.safe.demo.web.pojo.WordTemplateExample" resultType="java.lang.Integer" >
+    select count(*) from word_template
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update word_template
+    <set >
+      <if test="record.wordTemplateId != null" >
+        word_template_id = #{record.wordTemplateId,jdbcType=INTEGER},
+      </if>
+      <if test="record.wordName != null" >
+        word_name = #{record.wordName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.templateDate != null" >
+        template_date = #{record.templateDate,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update word_template
+    set word_template_id = #{record.wordTemplateId,jdbcType=INTEGER},
+      word_name = #{record.wordName,jdbcType=VARCHAR},
+      template_date = #{record.templateDate,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update word_template
+    set word_template_id = #{record.wordTemplateId,jdbcType=INTEGER},
+      word_name = #{record.wordName,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.safe.demo.web.pojo.WordTemplate" >
+    update word_template
+    <set >
+      <if test="wordName != null" >
+        word_name = #{wordName,jdbcType=VARCHAR},
+      </if>
+      <if test="templateDate != null" >
+        template_date = #{templateDate,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where word_template_id = #{wordTemplateId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.safe.demo.web.pojo.WordTemplate" >
+    update word_template
+    set word_name = #{wordName,jdbcType=VARCHAR},
+      template_date = #{templateDate,jdbcType=LONGVARCHAR}
+    where word_template_id = #{wordTemplateId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.safe.demo.web.pojo.WordTemplate" >
+    update word_template
+    set word_name = #{wordName,jdbcType=VARCHAR}
+    where word_template_id = #{wordTemplateId,jdbcType=INTEGER}
+  </update>
+</mapper>

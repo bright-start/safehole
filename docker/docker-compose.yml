@@ -1,0 +1,28 @@
+version: "3"
+
+services:
+  web:
+    build:
+      context: ./safehole
+    image: safehole:1.0.0
+    container_name: safehole
+    restart: always
+    ports:
+      - "8082:8081"
+    depends_on:
+      - mysql_db
+
+  mysql_db:
+    build:
+      context: ./mysql
+    image: mysql-safehole:1.0.0
+    container_name: mysql-safehole
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - "/Users/myhome/myresources/docker_data/safehole/mysql/conf/:/etc/mysql/conf.d"
+      - "/Users/myhome/myresources/docker_data/safehole/mysql/logs:/logs"
+      - "/Users/myhome/myresources/docker_data/safehole/mysql/data:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
